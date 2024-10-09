@@ -1,115 +1,108 @@
-import Image from "next/image";
-import localFont from "next/font/local";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { download } from "@/modules/download";
+import { NextRouter } from "next/router";
+import { FormEvent, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+type Files = File[];
 
-export default function Home() {
+export default function Home({ router }: { router: NextRouter }) {
+  const { save } = router.query;
+  const [files, setFiles] = useState<Files>([]);
+  const [names, setNames] = useState<string[]>([]);
+  const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
+
+  useEffect(() => {
+    if (save) {
+      const handleMessage = ({ data: { files } }: { data: { files: Files } }) => {
+        setFiles(files);
+        setNames(files.map(({ name }) => name));
+      };
+      navigator.serviceWorker.addEventListener("message", handleMessage);
+      return () => navigator.serviceWorker.removeEventListener("message", handleMessage);
+    } else {
+      const setEvent = (event: Event) => setInstallEvent(event as BeforeInstallPromptEvent);
+      window.addEventListener("beforeinstallprompt", setEvent);
+      return () => window.removeEventListener("beforeinstallprompt", setEvent);
+    }
+  }, []);
+
   return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div className="flex flex-col items-center mx-3 my-8 space-y-12">
+      <div className="text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold">SaveMate</h1>
+        <h6>Share It, Save It, Done!</h6>
+      </div>
+      {names.length ? (
+        <form
+          className="flex flex-col items-center space-y-5 max-w-64"
+          onSubmit={async (event: FormEvent) => {
+            event.preventDefault();
+            for (let i = 0; i < files.length; i++) await download(files[i], names[i]);
+            toast.success("File(s) downloaded successfully!");
+          }}
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded">Save Files</button>
+          <div className="space-y-4 max-h-96 overflow-y-scroll pr-1">
+            {names.map((name, index) => (
+              <div key={index} className="flex justify-between items-center space-x-2">
+                <label>File {index + 1}:</label>
+                <input
+                  type="text"
+                  className="border border-gray-400 rounded-md w-40 px-1 py-0.5"
+                  value={name}
+                  required
+                  maxLength={255}
+                  onChange={(event) =>
+                    setNames((prev) => {
+                      const newNames = prev.slice();
+                      newNames[index] = event.target.value;
+                      return newNames;
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </form>
+      ) : (
+        <>
+          <div className="space-y-2">
+            <h2 className="text-lg sm:text-xl text-center font-semibold">How to Use SaveMate?</h2>
+            <ol className="list-decimal pl-5 space-y-2 text-sm sm:text-base">
+              <li>
+                <strong>Install SaveMate:</strong> Add the SaveMate app to your device as a web app.
+              </li>
+              <li>
+                <strong>Share Your File:</strong> Open any app and choose a file or text to share.
+              </li>
+              <li>
+                <strong>Select SaveMate:</strong> Tap on the SaveMate icon in the share dialog.
+              </li>
+              <li>
+                <strong>Save It:</strong> Hit the “Save” button to store your file.
+              </li>
+              <li>
+                <strong>All Set!</strong> Your file is now saved in your Downloads folder!
+              </li>
+            </ol>
+          </div>
+          {installEvent && (
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 mx-auto rounded"
+              onClick={async () => {
+                await installEvent.prompt();
+                const choice = await installEvent.userChoice;
+                if (choice.outcome === "dismissed") return toast.error("App installation cancelled!");
+                setInstallEvent(null);
+                toast.success("App installed successfully!");
+              }}
+            >
+              Install SaveMate
+            </button>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -1,0 +1,70 @@
+{
+  "short_name": "SaveMate",
+  "name": "SaveMate - Share It, Save It, Done!",
+  "version": "1.0.0",
+  "id": "1.0.0",
+  "manifest_version": 2,
+  "description": "SaveMate lets you effortlessly save shared files and text directly to your Downloads folder with just a tap.",
+  "author": "Sahil Aggarwal",
+  "icons": [
+    {
+      "src": "icons/manifest-icon-192.maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/manifest-icon-192.maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/manifest-icon-512.maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/manifest-icon-512.maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/",
+  "share_target": {
+    "action": "/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["*/*"]
+        }
+      ]
+    }
+  },
+  "shortcuts": [
+    {
+      "name": "Instructions",
+      "url": "/"
+    }
+  ],
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "dir": "auto",
+  "scope": "/",
+  "lang": "en",
+  "prefer_related_applications": false,
+  "categories": ["productivity", "utilities"],
+  "display_override": ["standalone", "window-controls-overlay"],
+  "edge_side_panel": {
+    "preferred_width": 500
+  }
+}
