@@ -4,10 +4,9 @@ const pages = ["/"];
 const revision = Date.now().toString();
 
 const withPWA = withSerwistInit({
-  swSrc: "src/sw.ts",
+  swSrc: "src/service-workers/sw.ts",
   swDest: "public/sw.js",
   exclude: [/public\/sw.js/],
-  disable: process.env.NODE_ENV === "development",
   reloadOnOnline: false,
   additionalPrecacheEntries: pages.map((url) => ({ url, revision })),
 });

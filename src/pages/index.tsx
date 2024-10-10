@@ -4,7 +4,13 @@ import { NextRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+type DataEntry = string | null;
+
 type Files = File[];
+
+type Message = { data: { title: DataEntry; text: DataEntry; url: DataEntry; files: Files } };
+
+const encoder = new TextEncoder();
 
 export default function Home({ router }: { router: NextRouter }) {
   const { save } = router.query;
@@ -14,7 +20,14 @@ export default function Home({ router }: { router: NextRouter }) {
 
   useEffect(() => {
     if (save) {
-      const handleMessage = ({ data: { files } }: { data: { files: Files } }) => {
+      const handleMessage = ({ data: { title, text, url, files } }: Message) => {
+        if (!files.length) {
+          let content = "";
+          if (title) content += `Title: ${title}\n`;
+          if (text) content += `Text: ${text}\n`;
+          if (url) content += `Url: ${url}`;
+          if (content) files.push(new File([encoder.encode(content)], "savemate.txt", { type: "text/plain" }));
+        }
         setFiles(files);
         setNames(files.map(({ name }) => name));
       };

@@ -1,4 +1,5 @@
 import { CacheFirst, NetworkFirst, NetworkOnly, PrecacheEntry, RangeRequestsPlugin, Serwist, SerwistGlobalConfig, StaleWhileRevalidate } from "serwist";
+import "@/service-workers/save-sw";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -15,7 +16,6 @@ const serwist = new Serwist({
   skipWaiting: true,
   clientsClaim: true,
   offlineAnalyticsConfig: true,
-  importScripts: ["/save-sw.js"],
   precacheEntries: self.__SW_MANIFEST,
   precacheOptions: { cleanupOutdatedCaches: true, ignoreURLParametersMatching: [/.*/] },
   runtimeCaching: [
