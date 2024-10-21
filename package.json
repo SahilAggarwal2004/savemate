@@ -12,21 +12,21 @@
     "next": "14.2.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-toastify": "^10.0.5",
+    "react-toastify": "^10.0.6",
     "utility-kit": "^0.5.0"
   },
   "devDependencies": {
     "@builder.io/partytown": "^0.10.2",
     "@serwist/next": "^9.0.9",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.0",
-    "@types/serviceworker": "^0.0.98",
+    "@types/react-dom": "^18.3.1",
+    "@types/serviceworker": "^0.0.101",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.15",
     "postcss": "^8.4.47",
     "serwist": "^9.0.9",
-    "tailwindcss": "^3.4.13",
+    "tailwindcss": "^3.4.14",
     "typescript": "^5.6.3"
   }
 }

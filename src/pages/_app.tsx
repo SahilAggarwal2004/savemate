@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import Script from "next/script";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
@@ -63,6 +64,17 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="apple-touch-startup-image" href="icons/apple-splash-640-1136.jpg" media="(device-width: 320px) and (device-height: 568px)/ and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
         <link rel="apple-touch-startup-image" href="icons/apple-splash-1136-640.jpg" media="(device-width: 320px) and (device-height: 568px)/ and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" />
       </Head>
+
+      {/* Google tag (gtag.js) */}
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-TGRBTNHDQL" strategy="worker" />
+      <Script id="google-analytics" strategy="worker">
+        {`window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-TGRBTNHDQL');`}
+      </Script>
+
       {!loading && router.isReady && (
         <>
           <Component router={router} {...pageProps} />
