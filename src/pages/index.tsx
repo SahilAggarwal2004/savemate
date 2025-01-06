@@ -15,7 +15,7 @@ const encoder = new TextEncoder();
 export default function Home({ router }: { router: NextRouter }) {
   const { save } = router.query;
   const [files, setFiles] = useState<Files>([]);
-  const [names, setNames] = useState<string[]>([]);
+  const [names, setNames] = useState<{ name: string; extension: string }[]>([]);
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
@@ -29,7 +29,12 @@ export default function Home({ router }: { router: NextRouter }) {
           if (content) files.push(new File([encoder.encode(content)], "savemate.txt", { type: "text/plain" }));
         }
         setFiles(files);
-        setNames(files.map(({ name }) => name));
+        setNames(
+          files.map((file) => {
+            const [name, extension] = file.name.split(".");
+            return { name, extension: extension ? `.${extension}` : "" };
+          })
+        );
       };
       navigator.serviceWorker.addEventListener("message", handleMessage);
       return () => navigator.serviceWorker.removeEventListener("message", handleMessage);
@@ -51,29 +56,47 @@ export default function Home({ router }: { router: NextRouter }) {
           className="flex flex-col items-center space-y-5 max-w-64"
           onSubmit={async (event: FormEvent) => {
             event.preventDefault();
-            for (let i = 0; i < files.length; i++) await download(files[i], names[i]);
+            for (let i = 0; i < files.length; i++) await download(files[i], names[i].name + names[i].extension);
             toast.success("File(s) downloaded successfully!");
           }}
         >
           <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded">Save Files</button>
           <div className="space-y-4 max-h-96 overflow-y-scroll pr-1">
-            {names.map((name, index) => (
+            {names.map(({ name, extension }, index) => (
               <div key={index} className="flex justify-between items-center space-x-2">
                 <label>File {index + 1}:</label>
-                <input
-                  type="text"
-                  className="border border-gray-400 rounded-md w-40 px-1 py-0.5"
-                  value={name}
-                  required
-                  maxLength={255}
-                  onChange={(event) =>
-                    setNames((prev) => {
-                      const newNames = prev.slice();
-                      newNames[index] = event.target.value;
-                      return newNames;
-                    })
-                  }
-                />
+                <div className="flex w-48 space-x-[5%]">
+                  <input
+                    type="text"
+                    className="border border-gray-400 rounded-md w-[70%] px-1 py-0.5"
+                    placeholder="Name"
+                    value={name}
+                    required
+                    maxLength={235}
+                    onFocus={(event) => event.target.select()}
+                    onChange={(event) =>
+                      setNames((prev) => {
+                        const newNames = prev.slice();
+                        newNames[index].name = event.target.value;
+                        return newNames;
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    className="border border-gray-400 rounded-md w-[25%] px-1 py-0.5"
+                    placeholder="Extension"
+                    value={extension}
+                    maxLength={20}
+                    onChange={(event) =>
+                      setNames((prev) => {
+                        const newNames = prev.slice();
+                        newNames[index].extension = event.target.value;
+                        return newNames;
+                      })
+                    }
+                  />
+                </div>
               </div>
             ))}
           </div>
