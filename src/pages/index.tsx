@@ -60,7 +60,7 @@ export default function Home({ router }: { router: NextRouter }) {
             toast.success("File(s) downloaded successfully!");
           }}
         >
-          <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded">Save Files</button>
+          <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded-sm">Save Files</button>
           <div className="space-y-4 max-h-96 overflow-y-scroll pr-1">
             {names.map(({ name, extension }, index) => (
               <div key={index} className="flex justify-between items-center space-x-2">
@@ -125,7 +125,7 @@ export default function Home({ router }: { router: NextRouter }) {
           </div>
           {installEvent && (
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 mx-auto rounded"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 mx-auto rounded-sm"
               onClick={async () => {
                 await installEvent.prompt();
                 const choice = await installEvent.userChoice;
