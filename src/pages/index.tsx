@@ -30,9 +30,13 @@ export default function Home({ router }: { router: NextRouter }) {
         }
         setFiles(files);
         setNames(
-          files.map((file) => {
-            const [name, extension] = file.name.split(".");
-            return { name, extension: extension ? `.${extension}` : "" };
+          files.map(({ name }) => {
+            const lastDotIndex = name.lastIndexOf(".");
+            if (lastDotIndex === -1) return { name, extension: "" };
+            return {
+              name: name.slice(0, lastDotIndex),
+              extension: name.slice(lastDotIndex),
+            };
           })
         );
       };
