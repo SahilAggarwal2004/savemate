@@ -8,7 +8,7 @@ const revision = Date.now().toString();
 const withPWA = withSerwistInit({
   swSrc: "src/service-workers/sw.ts",
   swDest: "public/sw.js",
-  exclude: [/public\/sw.js/, /dynamic-css-manifest.json/],
+  exclude: [/public\/sw.js/],
   disable: process.env.NODE_ENV === "development",
   register: false,
   reloadOnOnline: false,
@@ -18,9 +18,6 @@ const withPWA = withSerwistInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  env: {
-    NEXT_PUBLIC_APP_VERSION: packageJSON.version,
-  },
   experimental: {
     nextScriptWorkers: true,
   },

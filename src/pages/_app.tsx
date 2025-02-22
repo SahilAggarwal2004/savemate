@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 
 import "@/styles/globals.css";
-import { getStorage, setStorage } from "@/modules/storage";
+import { handleVersionUpdate } from "@/modules/update";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -14,21 +14,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     setLoading(false);
-    if ("serviceWorker" in navigator) {
-      window.serwist?.register().then(() => {
-        const newVersion = process.env.NEXT_PUBLIC_APP_VERSION;
-        const oldVersion = getStorage("version", newVersion);
-        if (newVersion && oldVersion !== newVersion) {
-          setStorage("version", newVersion);
-          if (newVersion.split(".")[0] > oldVersion!.split(".")[0]) {
-            alert("Hey! We've made some big changes. Reloading now to keep things smooth!");
-            window.location.reload();
-          } else if (confirm("New update available! Want to refresh now?")) {
-            window.location.reload();
-          }
-        }
-      });
-    }
+    if ("serviceWorker" in navigator) window.serwist.register().then(handleVersionUpdate);
   }, []);
 
   return (

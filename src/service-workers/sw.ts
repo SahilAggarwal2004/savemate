@@ -1,4 +1,4 @@
-import { CacheFirst, NetworkFirst, NetworkOnly, PrecacheEntry, RangeRequestsPlugin, Serwist, SerwistGlobalConfig, StaleWhileRevalidate } from "serwist";
+import { CacheFirst, ExpirationPlugin, NetworkFirst, NetworkOnly, PrecacheEntry, RangeRequestsPlugin, Serwist, SerwistGlobalConfig, StaleWhileRevalidate } from "serwist";
 import "@/service-workers/save-sw";
 
 declare global {
@@ -19,6 +19,13 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   precacheOptions: { cleanupOutdatedCaches: true, ignoreURLParametersMatching: [/.*/] },
   runtimeCaching: [
+    {
+      matcher: ({ url }) => url.pathname === "/manifest.json",
+      handler: new CacheFirst({
+        cacheName: "manifest",
+        plugins: [new ExpirationPlugin({ maxAgeSeconds: 60 })],
+      }),
+    },
     {
       matcher: ({ request }) => request.destination === "document",
       handler: new NetworkOnly(),
