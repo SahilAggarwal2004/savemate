@@ -207,8 +207,8 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
 
       {/* Google tag (gtag.js) */}
-      <Script src="https://www.googletagmanager.com/gtag/js?id=G-TGRBTNHDQL" strategy="worker" />
-      <Script id="google-analytics" strategy="worker">
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-TGRBTNHDQL" strategy="afterInteractive" />
+      <Script id="google-analytics" strategy="afterInteractive">
         {`window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
