@@ -1,36 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { download } from "@/modules/download";
 import { NextRouter } from "next/router";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import QRCode from "react-qr-code";
 import { toast } from "react-toastify";
-
-type DataEntry = string | null;
-
-type Files = File[];
-
-type Message = { data: { title: DataEntry; text: DataEntry; url: DataEntry; files: Files } };
-
-const encoder = new TextEncoder();
 
 export default function Home({ router }: { router: NextRouter }) {
   const { save } = router.query;
-  const [files, setFiles] = useState<Files>([]);
+  const [data, setData] = useState<ClientData>({ title: "", text: "", url: "http://localhost:3000/qr?title=hi", files: [], noFiles: true });
+  const { files } = data;
   const [names, setNames] = useState<{ name: string; extension: string }[]>([]);
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
 
+  const qrValue = useMemo(() => {
+    const { title, text, url, noFiles } = data;
+    if (typeof window === "undefined" || !noFiles) return "";
+    const params = new URLSearchParams();
+    if (title) params.set("title", title);
+    if (text) params.set("text", text);
+    if (url) params.set("url", url);
+    return `${window.location.origin}/qr?${params.toString()}`;
+  }, [data]);
+
   useEffect(() => {
     if (save) {
-      const handleMessage = ({ data: { title, text, url, files } }: Message) => {
-        if (!files.length) {
-          let content = "";
-          if (title) content += `Title: ${title}\n`;
-          if (text) content += `Text: ${text}\n`;
-          if (url) content += `Url: ${url}`;
-          if (content) files.push(new File([encoder.encode(content)], "savemate.txt", { type: "text/plain" }));
-        }
-        setFiles(files);
+      const handleMessage = ({ data }: Message) => {
+        setData(data);
         setNames(
-          files.map(({ name }) => {
+          data.files.map(({ name }) => {
             const lastDotIndex = name.lastIndexOf(".");
             if (lastDotIndex === -1) return { name, extension: "" };
             return {
@@ -40,7 +37,17 @@ export default function Home({ router }: { router: NextRouter }) {
           })
         );
       };
+      const sendReady = () => navigator.serviceWorker.controller?.postMessage("ready");
+
       navigator.serviceWorker.addEventListener("message", handleMessage);
+      if (navigator.serviceWorker.controller) sendReady();
+      else {
+        const onControllerChange = () => {
+          sendReady();
+          navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+        };
+        navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+      }
       return () => navigator.serviceWorker.removeEventListener("message", handleMessage);
     } else {
       const setEvent = (event: Event) => setInstallEvent(event as BeforeInstallPromptEvent);
@@ -104,6 +111,19 @@ export default function Home({ router }: { router: NextRouter }) {
               </div>
             ))}
           </div>
+          {qrValue && (
+            <div className="flex flex-col items-center w-full mt-4 space-y-6">
+              <div className="flex items-center w-full">
+                <div className="grow border-t border-gray-300" />
+                <span className="mx-3 text-sm text-gray-500">OR</span>
+                <div className="grow border-t border-gray-300" />
+              </div>
+              <div className="text-center text-sm text-gray-700 font-semibold">Share with QR</div>
+              <div className="p-4 rounded-md border border-gray-200 shadow-sm bg-white">
+                <QRCode value={qrValue} size={180} bgColor="#FFFFFF" fgColor="#000000" />
+              </div>
+            </div>
+          )}
         </form>
       ) : (
         <>

@@ -9,3 +9,15 @@ declare global {
     beforeinstallprompt: BeforeInstallPromptEvent;
   }
 }
+
+// components/LinkifiedText.tsx
+type LinkifiedTextProps = { label: string; children: JSX.Element };
+
+// pages/index.tsx
+type ClientData = Data<File>;
+
+type Data<F> = { title: string; text: string; url: string; files: F[]; noFiles: boolean };
+
+type Message = { data: ClientData };
+
+type ServiceWorkerData = Data<FormDataEntryValue>;

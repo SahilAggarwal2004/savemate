@@ -2,14 +2,14 @@ import fs from "fs"
 import withSerwistInit from "@serwist/next";
 import packageJSON from "./package.json" with { type: "json" };
 
-const pages = ["/"];
+const pages = ["/", "/qr"];
 const revision = Date.now().toString();
 
 const withPWA = withSerwistInit({
   swSrc: "src/service-workers/sw.ts",
   swDest: "public/sw.js",
   exclude: [/public\/sw.js/],
-  disable: process.env.NODE_ENV === "development",
+  disable: process.env.NODE_ENV !== "production",
   register: false,
   reloadOnOnline: false,
   additionalPrecacheEntries: pages.map((url) => ({ url, revision })),
@@ -17,6 +17,7 @@ const withPWA = withSerwistInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactCompiler: true,
   reactStrictMode: true,
   experimental: {
     nextScriptWorkers: true,

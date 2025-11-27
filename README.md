@@ -1,3 +1,3 @@
 # SaveMate - Share It, Save It, Done!
 
-SaveMate is a fast and simple web app that allows you to quickly save shared text, links, and files directly to your device. By seamlessly integrating with your device's share menu, SaveMate makes it easy to capture and store important content with just a tap. No accounts, no hassle—just open the share dialog, hit "Save," and your files are downloaded straight to your device for offline access. Fast, private, and easy!
+SaveMate is a fast and simple web app that allows you to quickly save shared text, links, and files directly to your device. By seamlessly integrating with your device's share menu, SaveMate makes it easy to capture and store important content with just a tap. No accounts, no hassle - just open the share dialog, hit "Save," and your files are downloaded straight to your device for offline access. Fast, private, and easy!

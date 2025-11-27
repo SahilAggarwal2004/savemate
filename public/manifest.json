@@ -1,8 +1,8 @@
 {
   "short_name": "SaveMate",
   "name": "SaveMate - Share It, Save It, Done!",
-  "version": "1.0.3",
-  "id": "1.0.3",
+  "version": "1.1.0",
+  "id": "1.1.0",
   "manifest_version": 2,
   "description": "SaveMate lets you effortlessly save shared files and text directly to your Downloads folder with just a tap.",
   "author": "Sahil Aggarwal",
