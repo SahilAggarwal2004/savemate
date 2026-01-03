@@ -12,7 +12,7 @@
   "dependencies": {
     "babel-plugin-react-compiler": "^1.0.0",
     "linkify-react": "^4.3.2",
-    "next": "16.0.7",
+    "next": "16.0.10",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-qr-code": "^2.0.18",
