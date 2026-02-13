@@ -2,8 +2,6 @@ const getStorageInstance = (local = true) => (local ? localStorage : sessionStor
 
 export const removeStorage = (key: string, local = true) => getStorageInstance(local).removeItem(key);
 
-export const setStorage = (key: string, value: unknown, local = true) => getStorageInstance(local).setItem(key, JSON.stringify(value));
-
 export function getStorage<T>(key: string, fallbackValue?: T, local: boolean = true): T | undefined {
   const value = getStorageInstance(local).getItem(key);
   if (value) {
@@ -13,6 +11,10 @@ export function getStorage<T>(key: string, fallbackValue?: T, local: boolean = t
       removeStorage(key, local); // Remove corrupted data
     }
   }
-  if (fallbackValue !== undefined) setStorage(key, fallbackValue, local);
+  if (fallbackValue !== undefined) setStorage<T>(key, fallbackValue, local);
   return fallbackValue;
+}
+
+export function setStorage<T = unknown>(key: string, value: T, local = true) {
+  getStorageInstance(local).setItem(key, JSON.stringify(value));
 }
