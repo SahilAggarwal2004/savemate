@@ -42,7 +42,9 @@ export async function handleVersionUpdate() {
   }
 
   // major upgrade
-  if (parseVersion(newVersion)[0] > parseVersion(oldVersion)[0]) {
+  const oldMajor = parseVersion(oldVersion)[0];
+  const newMajor = parseVersion(newVersion)[0];
+  if (oldMajor && newMajor && newMajor > oldMajor) {
     alert("Hey! We've made some big changes. Reloading now!");
     return window.location.reload();
   }

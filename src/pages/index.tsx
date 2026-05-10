@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { download } from "@/modules/download";
-import { NextRouter } from "next/router";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import type { NextRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
+import type { SubmitEvent } from "react";
 import QRCode from "react-qr-code";
 import { toast } from "react-toastify";
+import { download } from "@/modules/download";
 
 export default function Home({ router }: { router: NextRouter }) {
   const { save } = router.query;
@@ -34,7 +35,7 @@ export default function Home({ router }: { router: NextRouter }) {
               name: name.slice(0, lastDotIndex),
               extension: name.slice(lastDotIndex),
             };
-          })
+          }),
         );
       };
       const sendReady = () => navigator.serviceWorker.controller?.postMessage("ready");
@@ -65,9 +66,9 @@ export default function Home({ router }: { router: NextRouter }) {
       {names.length ? (
         <form
           className="flex flex-col items-center space-y-5 max-w-64"
-          onSubmit={async (event: FormEvent) => {
+          onSubmit={async (event: SubmitEvent) => {
             event.preventDefault();
-            for (let i = 0; i < files.length; i++) await download(files[i], names[i].name + names[i].extension);
+            for (let i = 0; i < files.length; i++) await download(files[i]!, names[i]!.name + names[i]!.extension);
             toast.success("File(s) downloaded successfully!");
           }}
         >
@@ -87,9 +88,9 @@ export default function Home({ router }: { router: NextRouter }) {
                     onFocus={(event) => event.target.select()}
                     onChange={(event) =>
                       setNames((prev) => {
-                        const newNames = prev.slice();
-                        newNames[index].name = event.target.value;
-                        return newNames;
+                        const result = prev.slice();
+                        result[index]!.name = event.target.value;
+                        return result;
                       })
                     }
                   />
@@ -101,9 +102,9 @@ export default function Home({ router }: { router: NextRouter }) {
                     maxLength={20}
                     onChange={(event) =>
                       setNames((prev) => {
-                        const newNames = prev.slice();
-                        newNames[index].extension = event.target.value;
-                        return newNames;
+                        const result = prev.slice();
+                        result[index]!.extension = event.target.value;
+                        return result;
                       })
                     }
                   />
@@ -125,6 +126,12 @@ export default function Home({ router }: { router: NextRouter }) {
             </div>
           )}
         </form>
+      ) : save ? (
+        <div className="max-w-md rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-900 text-center">
+          <strong>Preparing shared files...</strong>
+          <br />
+          Please keep SaveMate open until processing is complete. Closing the app may interrupt file preparation or downloads.
+        </div>
       ) : (
         <>
           <div className="space-y-2">

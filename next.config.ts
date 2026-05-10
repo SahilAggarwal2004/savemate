@@ -1,5 +1,7 @@
 import fs from "fs"
 import withSerwistInit from "@serwist/next";
+import type { NextConfig } from "next";
+
 import packageJSON from "./package.json" with { type: "json" };
 
 const pages = ["/", "/qr"];
@@ -15,13 +17,9 @@ const withPWA = withSerwistInit({
   additionalPrecacheEntries: pages.map((url) => ({ url, revision })),
 });
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   reactCompiler: true,
   reactStrictMode: true,
-  experimental: {
-    nextScriptWorkers: true,
-  },
 };
 
 const manifestPath = "./public/manifest.json";

@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 
-import "@/styles/globals.css";
 import { handleVersionUpdate } from "@/modules/update";
+import "@/styles/globals.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
