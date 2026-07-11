@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
+    "target": "es2017",
     "module": "esnext",
     "lib": ["DOM", "ESNext"],
     "jsx": "react-jsx",
-    "target": "ES2017",
     "types": ["serviceworker", "@serwist/next/typings"],
     "skipLibCheck": true,
     "moduleResolution": "bundler",

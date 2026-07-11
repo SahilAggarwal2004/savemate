@@ -20,6 +20,9 @@ const withPWA = withSerwistInit({
 const nextConfig: NextConfig = {
   reactCompiler: true,
   reactStrictMode: true,
+  experimental: {
+    useTypeScriptCli: true,
+  }
 };
 
 const manifestPath = "./public/manifest.json";

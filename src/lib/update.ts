@@ -1,4 +1,5 @@
-import { getStorage, setStorage } from "./storage";
+import { tryCatchAsync } from "utility-kit";
+import { getStorage, setStorage } from "@/lib/storage";
 
 const parseVersion = (v: string) => v.split(".").map(Number);
 
@@ -17,11 +18,12 @@ function compareVersions(a: string, b: string) {
 }
 
 async function getLatestVersion() {
-  try {
+  const { success, data } = await tryCatchAsync(async () => {
     const res = await fetch("/manifest.json");
     const { version } = await res.json();
     return version as string;
-  } catch {}
+  });
+  if (success) return data;
 }
 
 export async function handleVersionUpdate() {
