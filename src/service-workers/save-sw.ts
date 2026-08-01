@@ -1,6 +1,6 @@
 import { tryCatchAsync } from "utility-kit";
 import { cacheName } from "@/constants";
-import { getShareCacheKey } from "@/lib/cache";
+import { getShareCacheKey, pruneStaleShareEntries } from "@/lib/cache";
 
 const encoder = new TextEncoder();
 
@@ -17,6 +17,8 @@ self.addEventListener("fetch", (event: FetchEvent) => {
     event.waitUntil(
       (async () => {
         const cache = await caches.open(cacheName);
+
+        await pruneStaleShareEntries(cache);
 
         const { success, error } = await tryCatchAsync(async () => {
           const form = await request.formData();
@@ -41,11 +43,17 @@ self.addEventListener("fetch", (event: FetchEvent) => {
           payload.set("noFiles", `${noFiles}`);
           for (const file of files) payload.append("files", file);
 
-          await cache.put(cacheKey, new Response(payload));
+          await cache.put(cacheKey, new Response(payload, { headers: { "X-Created-At": String(Date.now()) } }));
         });
 
         if (!success) {
-          await cache.put(cacheKey, new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } }));
+          await cache.put(
+            cacheKey,
+            new Response(JSON.stringify({ error: error.message }), {
+              status: 500,
+              headers: { "Content-Type": "application/json", "X-Created-At": String(Date.now()) },
+            }),
+          );
         }
       })(),
     );

@@ -7,8 +7,9 @@ import { toast } from "react-toastify";
 import { tryCatchAsync } from "utility-kit";
 
 import { cacheName, maxWaitMs, pollIntervalMs } from "@/constants";
-import { getShareCacheKey } from "@/lib/cache";
+import { getConsumedMarkerKey, getShareCacheKey } from "@/lib/cache";
 import { download } from "@/lib/download";
+import { getStorage, setStorage } from "@/lib/storage";
 
 export default function Home({ router }: { router: NextRouter }) {
   const { save, id } = router.query;
@@ -40,6 +41,12 @@ export default function Home({ router }: { router: NextRouter }) {
       return;
     }
 
+    if (getStorage(getConsumedMarkerKey(id), false, false)) {
+      toast.error("This shared content has already been processed. Please share again.");
+      router.replace("/");
+      return;
+    }
+
     let cancelled = false;
     const cacheKey = getShareCacheKey(id);
     const deadline = Date.now() + maxWaitMs;
@@ -52,6 +59,8 @@ export default function Home({ router }: { router: NextRouter }) {
         if (response) {
           await cache.delete(cacheKey);
           if (cancelled) return;
+
+          setStorage(getConsumedMarkerKey(id), true, false);
 
           if (!response.ok) {
             const { error } = await response.json().catch(() => ({ error: "Something went wrong while preparing your file(s)." }));
