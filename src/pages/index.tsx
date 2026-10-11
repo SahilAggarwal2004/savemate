@@ -13,10 +13,17 @@ import { getStorage, setStorage } from "@/lib/storage";
 
 export default function Home({ router }: { router: NextRouter }) {
   const { save, id } = router.query;
-  const [data, setData] = useState<ClientData>({ title: "", text: "", url: "http://localhost:3000/qr?title=hi", files: [], noFiles: true });
+  const [data, setData] = useState<ClientData>({
+    title: "",
+    text: "",
+    url: "http://localhost:3000/qr?title=hi",
+    files: [],
+    noFiles: true,
+  });
   const { files } = data;
   const [names, setNames] = useState<{ name: string; extension: string }[]>([]);
-  const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
+  const [installEvent, setInstallEvent] =
+    useState<BeforeInstallPromptEvent | null>(null);
 
   const qrValue = useMemo(() => {
     const { title, text, url, noFiles } = data;
@@ -30,7 +37,8 @@ export default function Home({ router }: { router: NextRouter }) {
 
   useEffect(() => {
     if (!save) {
-      const setEvent = (event: Event) => setInstallEvent(event as BeforeInstallPromptEvent);
+      const setEvent = (event: Event) =>
+        setInstallEvent(event as BeforeInstallPromptEvent);
       window.addEventListener("beforeinstallprompt", setEvent);
       return () => window.removeEventListener("beforeinstallprompt", setEvent);
     }
@@ -42,7 +50,9 @@ export default function Home({ router }: { router: NextRouter }) {
     }
 
     if (getStorage(getConsumedMarkerKey(id), false, false)) {
-      toast.error("This shared content has already been processed. Please share again.");
+      toast.error(
+        "This shared content has already been processed. Please share again.",
+      );
       router.replace("/");
       return;
     }
@@ -63,8 +73,12 @@ export default function Home({ router }: { router: NextRouter }) {
           setStorage(getConsumedMarkerKey(id), true, false);
 
           if (!response.ok) {
-            const { error } = await response.json().catch(() => ({ error: "Something went wrong while preparing your file(s)." }));
-            toast.error(error ?? "Something went wrong while preparing your file(s).");
+            const { error } = await response.json().catch(() => ({
+              error: "Something went wrong while preparing your file(s).",
+            }));
+            toast.error(
+              error ?? "Something went wrong while preparing your file(s).",
+            );
             router.replace("/");
             return;
           }
@@ -76,19 +90,32 @@ export default function Home({ router }: { router: NextRouter }) {
           const noFiles = form.get("noFiles") === "true";
           const files = form.getAll("files") as File[];
 
+          if (!files.length) {
+            toast.error(
+              "Your phone's Chrome didn't pass the file to SaveMate. This appears to be a Chrome issue on some Android phones. Text and links still work.",
+            );
+            router.replace("/");
+            return;
+          }
+
           setData({ title, text, url, files, noFiles });
           setNames(
             files.map(({ name }) => {
               const lastDotIndex = name.lastIndexOf(".");
               if (lastDotIndex === -1) return { name, extension: "" };
-              return { name: name.slice(0, lastDotIndex), extension: name.slice(lastDotIndex) };
+              return {
+                name: name.slice(0, lastDotIndex),
+                extension: name.slice(lastDotIndex),
+              };
             }),
           );
           return;
         }
 
         if (Date.now() > deadline) {
-          toast.error("Taking too long to prepare the shared file(s). Please try sharing again.");
+          toast.error(
+            "Taking too long to prepare the shared file(s). Please try sharing again.",
+          );
           router.replace("/");
           return;
         }
@@ -116,16 +143,25 @@ export default function Home({ router }: { router: NextRouter }) {
           onSubmit={async (event: SubmitEvent) => {
             event.preventDefault();
             const { success } = await tryCatchAsync(async () => {
-              for (let i = 0; i < files.length; i++) await download(files[i]!, names[i]!.name + names[i]!.extension);
+              for (let i = 0; i < files.length; i++)
+                await download(files[i]!, names[i]!.name + names[i]!.extension);
             });
             if (success) toast.success("File(s) downloaded successfully!");
-            else toast.error("Failed to download one or more files. Please try again.");
+            else
+              toast.error(
+                "Failed to download one or more files. Please try again.",
+              );
           }}
         >
-          <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded-sm">Save Files</button>
+          <button className="bg-blue-500 hover:bg-blue-600 text-white py-1.5 px-3 rounded-sm">
+            Save Files
+          </button>
           <div className="space-y-4 max-h-96 overflow-y-scroll pr-1">
             {names.map(({ name, extension }, index) => (
-              <div key={index} className="flex justify-between items-center space-x-2">
+              <div
+                key={index}
+                className="flex justify-between items-center space-x-2"
+              >
                 <label>File {index + 1}:</label>
                 <div className="flex w-48 space-x-[5%]">
                   <input
@@ -169,9 +205,16 @@ export default function Home({ router }: { router: NextRouter }) {
                 <span className="mx-3 text-sm text-gray-500">OR</span>
                 <div className="grow border-t border-gray-300" />
               </div>
-              <div className="text-center text-sm text-gray-700 font-semibold">Share with QR</div>
+              <div className="text-center text-sm text-gray-700 font-semibold">
+                Share with QR
+              </div>
               <div className="p-4 rounded-md border border-gray-200 shadow-sm bg-white">
-                <QRCode value={qrValue} size={180} bgColor="#FFFFFF" fgColor="#000000" />
+                <QRCode
+                  value={qrValue}
+                  size={180}
+                  bgColor="#FFFFFF"
+                  fgColor="#000000"
+                />
               </div>
             </div>
           )}
@@ -180,27 +223,35 @@ export default function Home({ router }: { router: NextRouter }) {
         <div className="max-w-md rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-900 text-center">
           <strong>Preparing shared files...</strong>
           <br />
-          Please keep SaveMate open until processing is complete. Closing the app may interrupt file preparation or downloads.
+          Please keep SaveMate open until processing is complete. Closing the
+          app may interrupt file preparation or downloads.
         </div>
       ) : (
         <>
           <div className="space-y-2">
-            <h2 className="text-lg sm:text-xl text-center font-semibold">How to Use SaveMate?</h2>
+            <h2 className="text-lg sm:text-xl text-center font-semibold">
+              How to Use SaveMate?
+            </h2>
             <ol className="list-decimal pl-5 space-y-2 text-sm sm:text-base">
               <li>
-                <strong>Install SaveMate:</strong> Add the SaveMate app to your device as a web app.
+                <strong>Install SaveMate:</strong> Add the SaveMate app to your
+                device as a web app.
               </li>
               <li>
-                <strong>Share Your File:</strong> Open any app and choose a file or text to share.
+                <strong>Share Your File:</strong> Open any app and choose a file
+                or text to share.
               </li>
               <li>
-                <strong>Select SaveMate:</strong> Tap on the SaveMate icon in the share dialog.
+                <strong>Select SaveMate:</strong> Tap on the SaveMate icon in
+                the share dialog.
               </li>
               <li>
-                <strong>Save It:</strong> Hit the “Save” button to store your file.
+                <strong>Save It:</strong> Hit the “Save” button to store your
+                file.
               </li>
               <li>
-                <strong>All Set!</strong> Your file is now saved in your Downloads folder!
+                <strong>All Set!</strong> Your file is now saved in your
+                Downloads folder!
               </li>
             </ol>
           </div>
@@ -210,7 +261,8 @@ export default function Home({ router }: { router: NextRouter }) {
               onClick={async () => {
                 await installEvent.prompt();
                 const choice = await installEvent.userChoice;
-                if (choice.outcome === "dismissed") return toast.error("App installation cancelled!");
+                if (choice.outcome === "dismissed")
+                  return toast.error("App installation cancelled!");
                 setInstallEvent(null);
                 toast.success("App installed successfully!");
               }}

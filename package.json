@@ -1,6 +1,6 @@
 {
   "name": "savemate",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -8,11 +8,11 @@
     "start": "next start",
     "lint": "eslint ."
   },
-  "packageManager": "pnpm@12.4.1",
+  "packageManager": "pnpm@12.11.2",
   "dependencies": {
     "linkify-react": "4.3.3",
     "linkifyjs": "^4.3.3",
-    "next": "16.3.4",
+    "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-qr-code": "2.2.0",
@@ -20,17 +20,17 @@
     "utility-kit": "0.12.0"
   },
   "devDependencies": {
-    "@serwist/next": "9.5.12",
+    "@serwist/next": "9.5.13",
     "@tailwindcss/postcss": "4.3.3",
-    "@types/node": "26.2.0",
+    "@types/node": "26.6.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "@types/serviceworker": "0.0.201",
+    "@types/serviceworker": "0.0.203",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.3.4",
-    "postcss": "8.5.28",
-    "serwist": "9.5.12",
+    "eslint-config-next": "16.4.0",
+    "postcss": "8.5.29",
+    "serwist": "9.5.13",
     "tailwindcss": "4.3.3",
     "typescript": "7.0.2"
   }
